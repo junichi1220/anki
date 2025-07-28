@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki App</title>
+    <link href="css/output.css" rel="stylesheet">
+    <script src="lib/papaparse.min.js"></script>
+    <script src="lib/chart.min.js"></script>
+    <script src="lib/dayjs.min.js"></script>
+    <script src="lib/utc.js"></script>
+    <script src="lib/timezone.js"></script>
+    <script src="lib/relativeTime.js"></script>
+    <script src="lib/isSameOrAfter.js"></script>
+    <script>
+        // Day.jsの初期設定
+        dayjs.extend(window.dayjs_plugin_utc);
+        dayjs.extend(window.dayjs_plugin_timezone);
+        dayjs.extend(window.dayjs_plugin_relativeTime);
+        dayjs.extend(window.dayjs_plugin_isSameOrAfter);
+        
+        // 日本語ロケール設定
+        dayjs.locale({
+            name: 'ja',
+            weekdays: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+            weekdaysShort: ['日', '月', '火', '水', '木', '金', '土'],
+            weekdaysMin: ['日', '月', '火', '水', '木', '金', '土'],
+            months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            ordinal: n => `${n}日`,
+            formats: {
+                LT: 'HH:mm',
+                LTS: 'HH:mm:ss',
+                L: 'YYYY/MM/DD',
+                LL: 'YYYY年M月D日',
+                LLL: 'YYYY年M月D日 HH:mm',
+                LLLL: 'YYYY年M月D日 dddd HH:mm'
+            },
+            relativeTime: {
+                future: 'あと%s',
+                past: '%s前',
+                s: '数秒',
+                m: '1分',
+                mm: '%d分',
+                h: '1時間',
+                hh: '%d時間',
+                d: '1日',
+                dd: '%d日',
+                M: '1ヶ月',
+                MM: '%dヶ月',
+                y: '1年',
+                yy: '%d年'
+            }
+        });
+        dayjs.tz.setDefault('Asia/Tokyo');
+    </script>
+    <style>
+        .card-flip {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease-in-out;
+        }
+        .card-flip.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div id="app" class="container mx-auto px-4 py-8">
+        <!-- ホーム画面 -->
+        <div id="home-screen" class="slide-in">
+            <div class="text-center space-y-2 mb-8">
+                <h1 class="text-4xl font-extrabold">
+                    <span class="text-gray-900">ANKI</span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-800">BOARD</span>
+                </h1>
+                <div class="flex items-center justify-center space-x-2">
+                    <div class="w-12 h-0.5 bg-gradient-to-r from-indigo-600 to-indigo-800"></div>
+                    <p class="text-gray-600 text-sm">Boost Your Memory</p>
+                    <div class="w-12 h-0.5 bg-gradient-to-l from-indigo-800 to-indigo-600"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 max-w-md mx-auto">
+                <button onclick="navigateTo('deck-select')" class="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
+                    <h2 class="text-xl font-bold mb-2">学習を始める</h2>
+                    <p class="text-sm opacity-80">今日の学習を開始します</p>
+                </button>
+                <button onclick="navigateTo('stats')" class="bg-teal-600 hover:bg-teal-700 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
+                    <h2 class="text-xl font-bold mb-2">統計</h2>
+                    <p class="text-sm opacity-80">学習進捗を確認</p>
+                </button>
+                <button onclick="navigateTo('decks')" class="bg-rose-500 hover:bg-rose-600 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
+                    <h2 class="text-xl font-bold mb-2">デッキ管理</h2>
+                    <p class="text-sm opacity-80">デッキの編集と管理</p>
+                </button>
+                <button onclick="navigateTo('settings')" class="bg-amber-500 hover:bg-amber-600 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
+                    <h2 class="text-xl font-bold mb-2">設定</h2>
+                    <p class="text-sm opacity-80">アプリの設定</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- その他の画面は最初は非表示 -->
+        <div id="deck-select-screen" class="hidden"></div>
+        <div id="study-screen" class="hidden"></div>
+        <div id="stats-screen" class="hidden">
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">今後の学習予定</h2>
+                    <canvas id="upcoming-reviews-chart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">総学習回数</h2>
+                        <select id="reviews-period" class="border border-gray-300 rounded px-3 py-1">
+                            <option value="day">全期間</option>
+                            <option value="week">1週間</option>
+                            <option value="month">1ヶ月</option>
+                        </select>
+                    </div>
+                    <canvas id="total-reviews-chart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">週間学習状況</h2>
+                    <canvas id="weekly-chart"></canvas>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4">レベル分布</h2>
+                    <canvas id="level-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div id="decks-screen" class="hidden"></div>
+        <div id="settings-screen" class="hidden"></div>
+        <div id="card-list-screen" class="hidden"></div>
+        <div id="card-edit-screen" class="hidden"></div>
+    </div>
+
+    <!-- スクリプトの読み込み（依存関係順） -->
+    <script src="js/storage.js"></script>
+    <script src="js/study.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
