@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // アプリケーションを初期化
     const app = new App();
+    app.initializeEventListeners(); //
+    app.navigateTo('home');   
 });
 
 class App {
