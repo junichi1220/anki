@@ -910,3 +910,7 @@ document.getElementById('settings-btn').addEventListener('click', () => {
         }
     }
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new App();
+    app.initializeEventListeners(); // 
+});
