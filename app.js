@@ -35,19 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class App {
     constructor() {
-        this.currentScreen = 'home';
-        this.currentDeck = null;
-        this.currentCard = null;
-        
-        // 保存された設定を読み込む
-        const savedSettings = JSON.parse(localStorage.getItem('ankiSettings') || '{}');
-        window.studyManager.MAX_NEW_CARDS = savedSettings.maxNewCards || 20;
-        window.studyManager.MAX_REVIEW_CARDS = savedSettings.maxReviewCards || 100;
-        
-        this.initializeEventListeners();
+        // 初期化
     }
 
     initializeEventListeners() {
+        document.getElementById("start-learning-btn").addEventListener("click", () => {
+            this.navigateTo("deck-select");
+        });
+        document.getElementById("stats-btn").addEventListener("click", () => {
+            this.navigateTo("stats");
+        });
+        document.getElementById("decks-btn").addEventListener("click", () => {
+            this.navigateTo("decks");
+        });
+        document.getElementById("settings-btn").addEventListener("click", () => {
+            this.navigateTo("settings");
+        });
+    }
+
+    // 
     navigateTo(screenId) {
         this.displayScreen(screenId);
     }
