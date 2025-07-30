@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anki App</title>
-    <link href="css/output.css" rel="stylesheet">
-    <script src="lib/papaparse.min.js"></script>
-    <script src="lib/chart.min.js"></script>
-    <script src="lib/dayjs.min.js"></script>
-    <script src="lib/utc.js"></script>
-    <script src="lib/timezone.js"></script>
-    <script src="lib/relativeTime.js"></script>
-    <script src="lib/isSameOrAfter.js"></script>
+    <link href="output.css" rel="stylesheet" />
+    <script src="papaparse.min.js"></script>
+    <script src="chart.min.js"></script>
+    <script src="dayjs.min.js"></script>
+    <script src="utc.js"></script>
+    <script src="timezone.js"></script>
+    <script src="relativeTime.js"></script>
+    <script src="isSameOrAfter.js"></script>
     <script>
-        // Day.jsの初期設定
         dayjs.extend(window.dayjs_plugin_utc);
         dayjs.extend(window.dayjs_plugin_timezone);
         dayjs.extend(window.dayjs_plugin_relativeTime);
         dayjs.extend(window.dayjs_plugin_isSameOrAfter);
-        
-        // 日本語ロケール設定
+
         dayjs.locale({
             name: 'ja',
             weekdays: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
@@ -106,23 +104,23 @@
                 <button id="start-learning-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
                     <h2 class="text-xl font-bold mb-2">学習を始める</h2>
                     <p class="text-sm opacity-80">今日の学習を開始します</p>
-            </button>
+                </button>
                 <button id="stats-btn" class="bg-teal-600 hover:bg-teal-700 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
                     <h2 class="text-xl font-bold mb-2">統計</h2>
                     <p class="text-sm opacity-80">学習進捗を確認</p>
-            </button>
+                </button>
                 <button id="decks-btn" class="bg-rose-500 hover:bg-rose-600 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
                     <h2 class="text-xl font-bold mb-2">デッキ管理</h2>
                     <p class="text-sm opacity-80">デッキの編集と管理</p>
-            </button>
+                </button>
                 <button id="settings-btn" class="bg-amber-500 hover:bg-amber-600 text-white p-6 rounded-lg shadow-lg transition-all duration-200 hover:scale-105">
                     <h2 class="text-xl font-bold mb-2">設定</h2>
                     <p class="text-sm opacity-80">アプリの設定</p>
-            </button>
+                </button>
             </div>
         </div>
 
-        <!-- その他の画面は最初は非表示 -->
+        <!-- その他の画面（初期は非表示） -->
         <div id="deck-select-screen" class="hidden"></div>
         <div id="study-screen" class="hidden"></div>
         <div id="stats-screen" class="hidden">
@@ -158,10 +156,10 @@
         <div id="card-edit-screen" class="hidden"></div>
     </div>
 
-    <!-- スクリプトの読み込み（依存関係順） -->
-    <script src="js/storage.js"></script>
-    <script src="js/study.js"></script>
-    <script src="js/stats.js"></script>
-    <script src="js/app.js"></script>
+    <!-- スクリプトの読み込み -->
+    <script src="storage.js"></script>
+    <script src="study.js"></script>
+    <script src="stats.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
