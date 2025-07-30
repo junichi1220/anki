@@ -17,6 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // アプリケーションを初期化
     const app = new App();
     app.initializeEventListeners(); //
+    navigateTo(screenId) {
+    this.displayScreen(screenId);
+}
+    displayScreen(screenId) {
+    // すべての画面を非表示
+    document.querySelectorAll('[id$="-screen"]').forEach(el => el.classList.add('hidden'));
+
+    // 対象の画面だけ表示
+    const screen = document.getElementById(`${screenId}-screen`);
+    if (screen) {
+        screen.classList.remove('hidden');
+    }
+}
     app.navigateTo('home');   
 });
 
