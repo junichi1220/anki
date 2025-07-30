@@ -33,6 +33,19 @@ class App {
     }
 
     initializeEventListeners() {
+        document.getElementById('start-learning-btn').addEventListener('click', () => {
+    this.navigateTo('deck-select');
+});
+document.getElementById('stats-btn').addEventListener('click', () => {
+    this.navigateTo('stats');
+});
+document.getElementById('decks-btn').addEventListener('click', () => {
+    this.navigateTo('decks');
+});
+document.getElementById('settings-btn').addEventListener('click', () => {
+    this.navigateTo('settings');
+});
+
         // グローバルに関数を公開
         window.app = this;
         window.navigateTo = (screen) => this.navigateTo(screen);
