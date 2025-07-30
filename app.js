@@ -48,7 +48,7 @@ class App {
     }
 
     initializeEventListeners() {
-         navigateTo(screenId) {
+    navigateTo(screenId) {
         this.displayScreen(screenId);
     }
 
