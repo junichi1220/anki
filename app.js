@@ -48,6 +48,18 @@ class App {
     }
 
     initializeEventListeners() {
+         navigateTo(screenId) {
+        this.displayScreen(screenId);
+    }
+
+    displayScreen(screenId) {
+        document.querySelectorAll('[id$="-screen"]').forEach(el => el.classList.add('hidden'));
+        const screen = document.getElementById(`${screenId}-screen`);
+        if (screen) {
+            screen.classList.remove('hidden');
+        }
+    }
+}
         document.getElementById('start-learning-btn').addEventListener('click', () => {
     this.navigateTo('deck-select');
 });
